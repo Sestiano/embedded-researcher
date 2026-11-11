@@ -62,8 +62,8 @@ html, body { height: 100%; margin: 0; overflow: hidden; background: var(--bg); c
 /* top bar stays strictly over the graph area (left of the sidebar), never overlapping aside */
 header { position: fixed; z-index: 15; top: 14px; left: 14px; right: 426px; display: flex; align-items: center; gap: 8px; pointer-events: none; }
 header > * { pointer-events: auto; }
-.brand { display: flex; align-items: center; gap: 9px; height: var(--h-bar); padding: 0 15px 0 11px; border-radius: var(--r-pill); min-width: 0; flex: 0 1 auto; }
-.brand-logo { width: 22px; height: 22px; border-radius: 6px; object-fit: cover; object-position: 36% 35%; flex: none; box-shadow: 0 1px 3px rgba(0, 0, 0, .28); }
+.brand { display: flex; align-items: center; gap: 9px; height: var(--h-bar); padding: 0 15px 0 10px; border-radius: var(--r-pill); min-width: 0; flex: 0 1 auto; }
+.brand-logo { width: 22px; height: 22px; border-radius: 6px; object-fit: cover; flex: none; display: block; border: 1px solid var(--line); }
 header h1 { font-size: 14px; margin: 0; font-weight: 600; letter-spacing: -.012em; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
 .brand-sep { width: 1px; height: 14px; background: var(--line); flex: none; }
 .stats { font-size: 12px; color: var(--muted); font-variant-numeric: tabular-nums; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
