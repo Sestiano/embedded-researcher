@@ -1,0 +1,21 @@
+# systemd user service: keeps the interface running and restarts it after a reboot or a crash.
+#
+#   bash deploy/install-service.sh        # writes ~/.config/systemd/user/unitn-net.service with this repo's path and enables it
+#   loginctl enable-linger "$USER"        # start at boot, without anyone logged in
+#   systemctl --user status unitn-net     # journalctl --user -u unitn-net   for the log
+#
+# It listens on 127.0.0.1 only. To reach it from other machines put it behind a reverse proxy with access control,
+# or (trusted network only) add `--host 0.0.0.0`: the page shows names of real people.
+[Unit]
+Description=UniTrento research affinity network (web interface)
+After=network.target
+
+[Service]
+WorkingDirectory=%h/EmbeddedResearcher
+ExecStart=%h/EmbeddedResearcher/.venv/bin/python -m unitn_net serve --port 8000
+Restart=on-failure
+RestartSec=5
+NoNewPrivileges=true
+
+[Install]
+WantedBy=default.target

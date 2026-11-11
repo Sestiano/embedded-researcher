@@ -1,0 +1,20 @@
+cff-version: 1.2.0
+title: "Embedded Researcher: Rete multilivello di affinità scientifica e didattica"
+message: "Se utilizzi o citi questo software per ricerca o valutazione istituzionale, citalo come indicato di seguito."
+type: software
+authors:
+  - family-names: Franchini
+    given-names: Sebastiano
+    affiliation: "Università degli Studi di Trento"
+  - family-names: Zamparelli
+    given-names: Roberto
+    affiliation: "Università degli Studi di Trento"
+year: 2026
+version: 0.1.0
+license: AGPL-3.0-or-later
+keywords:
+  - research-network
+  - scientometrics
+  - semantic-embeddings
+  - community-detection
+  - university-of-trento

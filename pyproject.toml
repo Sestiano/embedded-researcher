@@ -1,0 +1,39 @@
+[project]
+name = "unitn-net"
+version = "0.1.0"
+description = "Embedded Researcher — UniTrento research affinity network: offline pipeline + static web UI"
+license = { file = "LICENSE" }
+authors = [
+  { name = "Sebastiano Franchini" },
+  { name = "Roberto Zamparelli" },
+]
+requires-python = ">=3.12"
+dependencies = [
+  "requests>=2.32",
+  "pandas>=2.2",
+  "pyarrow>=17",
+  "numpy>=1.26",
+  "scipy>=1.13",              # sparse matrices in layers.py (already a scikit-learn dependency)
+  "scikit-learn>=1.5",
+  "sentence-transformers>=6.1",   # 6.1: required by google/embeddinggemma-2 (`embed --alt`)
+  "torchvision",              # google/embeddinggemma-2 loads its image/video processors even in text-only mode (`embed --alt`)
+  "huggingface_hub>=0.24",    # resolve the model revision hash (already a sentence-transformers dependency)
+  "torch>=2.3",               # Linux wheels on PyPI bundle CUDA 12
+  "python-igraph>=0.11",
+]
+
+[project.optional-dependencies]
+dev = ["pytest>=8"]
+jev = [
+    "typesafe-sdk>=0.7.2",
+]
+
+[build-system]
+requires = ["hatchling"]
+build-backend = "hatchling.build"
+
+[tool.hatch.build.targets.wheel]
+packages = ["src/unitn_net"]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]

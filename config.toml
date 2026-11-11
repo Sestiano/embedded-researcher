@@ -1,0 +1,120 @@
+# config.toml — every threshold, weight and endpoint lives here; the code never hardcodes them.
+
+[runtime]
+python_version = "3.12"
+env_manager    = "uv"
+platform       = "WSL2 Ubuntu, NVIDIA RTX 4070 Laptop 8 GB VRAM, 16 GB RAM"
+
+[contact]
+# Sent in the User-Agent of every HTTP request (CKAN, IRIS, OpenAlex). Fill in before running.
+email = "franchini.sebastiano@gmail.com"
+
+[scope]
+# Matched case-insensitively as substrings of `posizioni[].ruolo` (values listed in reports/00_data_audit.md).
+# In scope: research/academic staff. Excluded: PhD students (dottorandi), Personale TA, Ospite, Rappresentante degli studenti,
+# Esercitatore, Collaboratore linguistico, Specializzando, organisational roles (Presidente, Direttore, ...) and the generic
+# "Docente"/"Collaboratore".
+roles        = [
+  "professore ordinario", "professoressa ordinaria", "professore associato", "professoressa associata",
+  "professore emerito", "professore senior", "professore aggregato", "visiting professor",
+  "ricercat",                      # ricercatore/ricercatrice, TD, RTD-A
+  "assegnista", "docente a contratto", "incaricato post doc",
+  "collaboratore di ricerca", "contrattista di ricerca", "incaricato di ricerca", "borsista di ricerca",
+]
+pub_year_min = 2010
+deployment   = "local"
+
+[opendata]
+ckan_base = "https://dati.trentino.it"
+datasets = [
+  "personale-accademico-e-tecnico-amministrativo-dell-universita-di-trento",
+  "pubblicazioni-universita-di-trento",
+  "insegnamenti-universita-di-trento",
+  "unita-organizzative-dell-universita-di-trento",
+]
+
+[iris]
+endpoint        = "https://iris.unitn.it/oai/openaire4"
+metadata_prefix = "oai_openaire"   # verified 2026-09-29 against ListMetadataFormats (the only format offered)
+min_interval_s  = 5.0   # iris.unitn.it/robots.txt: Crawl-delay 5
+
+[openalex]
+api_key_env    = "OPENALEX_API_KEY"
+base_url       = "https://api.openalex.org"
+institution_id = "I193223587"   # verified by `fetch-openalex` against /institutions/<id>
+max_cost_usd   = 1.0            # STOP if the estimated cost of the institution pull exceeds this
+per_page       = 100
+list_cost_per_1000 = 0.10       # https://help.openalex.org/access/example-costs/
+
+[link]
+title_threshold  = 0.90   # difflib ratio on normalised titles (method 3)
+min_title_tokens = 5
+ambiguity_margin = 0.02   # second candidate within this cosine margin -> log, do not link
+
+[embedding]
+model           = "Qwen/Qwen3-Embedding-0.6B"
+revision        = "97b0c614be4d77ee51c0cef4e5f07c00f9eb65b3"  # pinned 2026-09-17 (first `embed` run)
+max_tokens      = 4096   # whole abstracts: a choice, not a model limit (Qwen3-Embedding accepts 32k); longer texts are truncated and counted
+batch_size      = 16
+document_prefix = ""      # Qwen3-Embedding documents take no instruction (model card)
+tokenizer_kwargs = { padding_side = "left" }   # recommended by the model card
+config_kwargs   = {}
+dtype           = "float32"
+
+[embedding_alt]           # second model, only for the comparison in `evaluate`; run `embed --alt`
+model           = "google/embeddinggemma-2"      # Apache 2.0, 8k tokens, 768 dimensions (model card read 2026-11-11)
+revision        = "f9972ac22e696a105c482202646979e33e4b5a1e"   # pinned 2026-11-11 (first `embed --alt` run)
+max_tokens      = 4096
+batch_size      = 16
+document_prefix = "task: clustering | query: "   # model card: symmetric prompt for grouping texts by topic
+tokenizer_kwargs = {}
+config_kwargs   = { vision_config = "none", audio_config = "none" }   # text-only loading ("none" -> None)
+dtype           = "bfloat16"                     # model card: bfloat16 or float32, never float16
+tag             = "alt"
+
+[layers]
+top_k                = 10
+min_papers_sem       = 3      # publications WITH an abstract, in one language, needed to enter `sem`
+recency_tau          = 8      # years; 0 disables recency weighting
+sem_candidates       = 50     # centroid-cosine neighbours for which the exact set-to-set score is computed
+min_abstract_words   = 20     # shorter "abstracts" ("-", "Guest editorial", "(in print)") are not abstracts: the publication stays out of `sem`
+min_course_words     = 20     # same rule for courses: without a real description a course has no vector (its name alone is not compared)
+sem_calibrate        = true   # cosine -> percentile among random pairs of abstracts of the same language (see layers.py)
+sem_within_language  = true   # sem compares only publications of the same language (it/en), never across languages
+edge_layers          = ["sem", "coupling", "direct", "coauth", "teach"]  # `field` scores are attached but never create edges
+unexplored_percentile = 0.9
+
+[confidence]              # how sure we are about `sem` for a pair (defaults, not calibrated on data)
+half_evidence    = 5.0    # confidence = n / (n + half_evidence), n = abstracts of the person in that language: 0.5 at 5 abstracts
+weight_composite = false  # if true, the composite multiplies the sem weight by the pair's confidence (UI: checkbox; evaluate reports both)
+
+[teach]                   # the `teach` layer = weighted mean of three components (over the ones defined for the pair)
+co_teaching = 0.3         # 1 - 0.5^k, k = courses taught by both (same course record)
+programmes  = 0.3         # Jaccard of the degree programmes the two teach in
+content     = 0.4         # cosine between the centroids of the course descriptions (undefined without descriptions)
+
+[weights]                 # composite defaults; the UI can override
+sem      = 0.35
+coupling = 0.20
+direct   = 0.10
+coauth   = 0.10
+teach    = 0.15
+field    = 0.10
+
+[graph]
+seed        = 0
+n_seeds     = 10
+resolution  = 2.0   # Leiden resolution: 1.0 gave ~10 communities that mostly redraw the departments; 2.0 splits them into research themes
+                    # (15 on the 2026-11-11 check, as stable across seeds as 1.0: ARI 0.94 vs 0.93). Higher = more, smaller communities.
+resolutions = [2.0, 1.0]   # partitions exported to the UI so the user can switch between thematic (2.0) and macro/departmental (1.0) communities
+label_terms = 6
+layout_iterations = 1000
+layout_community_pull = 4.0   # layout only: intra-community edges weigh (1 + this) times more; 0 = plain force layout
+
+[evaluation]
+years_back      = 4
+precision_k     = [10, 50, 100]
+bootstrap_reps  = 200
+audit_people    = 20
+audit_neighbours = 5
+seed            = 0

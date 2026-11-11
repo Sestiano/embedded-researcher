@@ -1,0 +1,22 @@
+# environment
+.venv/
+__pycache__/
+*.pyc
+.pytest_cache/
+.env
+.claude/
+
+# everything the pipeline downloads or produces (personal data, abstracts, results): never in git
+data/raw/
+data/interim/
+data/processed/
+!data/**/.gitkeep
+data/manual_affiliations.csv
+data/optout.csv
+reports/*
+!reports/.gitkeep
+
+# working notes and agent instructions, not part of the published code
+AGENTS.md
+HANDOFF.md
+PREP_CHIAMATA.md
