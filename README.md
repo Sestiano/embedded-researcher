@@ -1,5 +1,5 @@
 <p align="left">
-  <img src="logoER.png" alt="Embedded Researcher" width="64" style="border-radius: 10px;">
+  <img src="logoER.png" alt="Embedded Researcher" width="72">
 </p>
 
 # Embedded Researcher — Rete di affinità di ricerca · Università di Trento
