@@ -122,7 +122,7 @@ Ogni singolo passo si può anche lanciare separatamente con `uv run python -m un
    uv run python -m unitn_net fetch-openalex
    uv run python -m unitn_net all
    ```
-   Il passo scarica in primo luogo in blocco tutti i lavori affiliati a UniTrento su OpenAlex dal 2010 (~220 pagine da 200 lavori, ~2 minuti, costo **$0,03**) e poi recupera singolarmente i DOI mancanti dalla cache d'ateneo (chiamate singole gratuite su OpenAlex, ~25–35 minuti; se interrotto riprende esattamente dal DOI a cui era arrivato). Il tetto di sicurezza è fissato a `max_cost_usd = 2.0` in `config.toml`. Se `OPENALEX_API_KEY` è presente in `.env`, anche il comando `build` (e il pulsante 1-clic nella pagina web) esegue automaticamente `fetch-openalex`.
+   Il passo scarica in primo luogo in blocco tutti i lavori affiliati a UniTrento su OpenAlex dal 2010 (indicativamente 220 pagine da 200 lavori, 2 minuti, costo **$0,03**) e poi recupera singolarmente i DOI mancanti dalla cache d'ateneo (chiamate singole gratuite su OpenAlex, ~25–35 minuti; se interrotto riprende esattamente dal DOI a cui era arrivato). Il tetto di sicurezza è fissato a `max_cost_usd = 2.0` in `config.toml`. Se `OPENALEX_API_KEY` è presente in `.env`, anche il comando `build` (e il pulsante 1-clic nella pagina web) esegue automaticamente `fetch-openalex`.
 
 **2. Calcolare** (tutto in un colpo, sui dati già scaricati):
 
