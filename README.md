@@ -1,3 +1,7 @@
+<p align="left">
+  <img src="logoER.jpg" alt="Embedded Researcher" width="64" style="border-radius: 10px;">
+</p>
+
 # Embedded Researcher — Rete di affinità di ricerca · Università di Trento
 
 Una mappa interattiva di chi, all'Università di Trento, lavora su temi vicini: chi pubblica su argomenti simili, chi ha già

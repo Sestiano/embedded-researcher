@@ -132,6 +132,8 @@ class Handler(SimpleHTTPRequestHandler):
             return str(config.PROCESSED / "graph.json")
         if clean == "/graph_alt.json":
             return str(config.PROCESSED / "graph_alt.json")
+        if clean == "/logoER.jpg":
+            return str(config.ROOT / "logoER.jpg")
         return super().translate_path(path)          # resolved inside `directory` (web/); ".." is stripped by the base class
 
     def end_headers(self) -> None:
