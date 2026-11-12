@@ -72,7 +72,7 @@ Servono Linux (o WSL2), Python 3.12 e [uv](https://docs.astral.sh/uv/). Una GPU 
 `embed` (senza, gira su CPU, lentamente).
 
 ```bash
-git clone <url> && cd EmbeddedResearcher
+git clone <url> && cd embedded-reseacher
 uv sync --extra dev        # crea .venv con le dipendenze e pytest
 uv run pytest -q           # test su dati sintetici, pochi secondi, nessuna rete
 ```
